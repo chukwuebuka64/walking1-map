@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Interactive Leaflet Map</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    #map {
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+  // Step 1: Initialize map
+  const map = L.map('map').setView([52.5200, 13.4050], 13); // Berlin coordinates 
+
+  // Step 2: Add OpenStreetMap tile layer
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Step 3: Add multiple predefined markers
+  const locations = [
+  { lat: 52.5200, lng: 13.4050, label: "Berlin" },
+  { lat: 52.5163, lng: 13.3777, label: "Brandenburg Gate" },
+  { lat: 52.4986, lng: 13.3760, label: "Potsdamer Platz" }
+  ];
+
+  locations.forEach(loc => {
+    L.marker([loc.lat, loc.lng]).addTo(map)
+      .bindPopup(loc.label);
+  });
+
+  // Step 4: Allow user to add new marker on click
+  map.on('click', function(e) {
+    const { lat, lng } = e.latlng;
+    const newMarker = L.marker([lat, lng]).addTo(map);
+    newMarker.bindPopup("New pin at:<br>" + lat.toFixed(4) + ", " + lng.toFixed(4)).openPopup();
+  });
+
+  
+
+  // Step 5: Locate and show user's current location
+  map.locate({ setView: true, maxZoom: 16 });
+  
+  map.on('locationfound', function(e) {
+    L.marker(e.latlng).addTo(map)
+      .bindPopup("You are here!").openPopup();
+  });
+  
+  map.on('locationerror', function(e) {
+    alert("Location access denied.");
+  });
+
+
+
+</script>
+
+</body>
+</html>
